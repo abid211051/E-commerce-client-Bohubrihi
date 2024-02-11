@@ -1,0 +1,25 @@
+.align {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: start;
+    text-decoration: none;
+    list-style: none;
+}
+
+.itemCenter {
+    display: flex;
+    /* align-items: center; */
+    justify-content: center;
+}
+
+.flex {
+    display: flex;
+    justify-content: space-between;
+}
+
+@media only screen and (min-width:768px) {
+    .inp {
+        width: 300px;
+    }
+}
