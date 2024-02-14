@@ -14,7 +14,7 @@ Currently, two official plugins are available:
 3. Load more button. [skip state and limit combinition] [complete]
 4. Review system on product [pending]
 5. Search bar [complete]
-6. Admin can create coupon [new coupon model. coupon name, discount, expiredate] [pending]
-7. Purchase History in user Dasboard [Payment model] [pending]
+6. Admin can create coupon [new coupon model. coupon name, discount, expiredate] [complete]
+7. Purchase History in user Dasboard [Payment model] [complete]
 8. IPN validation and update in purchase history [pending]
 

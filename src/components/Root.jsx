@@ -12,6 +12,8 @@ import CreateProduct from './admin/CreateProduct';
 import Cart from './order/Cart';
 import ShippingAddress from './order/ShippingAddress';
 import Checkout from './order/Checkout';
+import CreateCoupon from './admin/CreateCoupon';
+import SeeCoupon from './admin/SeeCoupon';
 
 const Main = () => {
     return (
@@ -46,6 +48,9 @@ const Main = () => {
                 </AdminRoute>
                 <AdminRoute exact path="/create/product">
                     <CreateProduct />
+                </AdminRoute>
+                <AdminRoute exact path="/create/coupon">
+                    <CreateCoupon />
                 </AdminRoute>
                 <Redirect to="/" />
             </Switch>

@@ -1,6 +1,7 @@
 import Layout from '../Layout';
 import { Link } from 'react-router-dom';
 import { userInfo } from '../../utils/auth';
+import SeeCoupon from './SeeCoupon';
 
 const AdminDashboard = () => {
     const { name, email, role } = userInfo();
@@ -14,6 +15,9 @@ const AdminDashboard = () => {
                     </li>
                     <li className="list-group-item">
                         <a className="nav-link" href="/create/product">Create Product</a>
+                    </li>
+                    <li className="list-group-item">
+                        <a className="nav-link" href="/create/coupon">Create Coupon</a>
                     </li>
                 </ul>
             </div>
@@ -40,6 +44,9 @@ const AdminDashboard = () => {
                 <div className="col-sm-9">
                     <UserInfo />
                 </div>
+            </div>
+            <div>
+                <SeeCoupon />
             </div>
         </Layout>
     )

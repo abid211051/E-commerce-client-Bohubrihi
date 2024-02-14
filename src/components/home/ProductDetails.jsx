@@ -3,17 +3,18 @@ import Layout from '../Layout';
 import { API } from '../../utils/config';
 import { Link } from 'react-router-dom';
 import { getProductDetails } from '../../api/apiProduct';
-import { ShowSuccess, ShowError } from '../../utils/messages';
+import { ShowSuccess, ShowError, ShowLoading } from '../../utils/messages';
 import { addToCart } from '../../api/apiOrder';
 import { isAuthenticated, userInfo } from '../../utils/auth';
+import ReviewForm from '../user/ReviewForm';
 
 const ProductDetails = (props) => {
     const [product, setProduct] = useState({});
     const [error, setError] = useState(false);
     const [success, setSuccess] = useState(false);
 
+    const id = props.match.params.id;
     useEffect(() => {
-        const id = props.match.params.id;
         getProductDetails(id)
             .then(response => setProduct(response.data.product))
             .catch(err => setError("Failed to load products"))
@@ -51,8 +52,7 @@ const ProductDetails = (props) => {
                 </ol>
             </nav>
             <div>
-                {/* {ShowSuccess(success, 'Item Added to Cart!')} */}
-                {/* <ShowLoading loading={loading} /> */}
+                <ShowSuccess success={success} msg={'Item Added to Cart!'} />
                 <ShowError error={error} />
             </div>
             <div className="row container">
@@ -73,6 +73,7 @@ const ProductDetails = (props) => {
                     </> : ""}
                 </div>
             </div>
+            <ReviewForm id={id} />
         </Layout>
     )
 }

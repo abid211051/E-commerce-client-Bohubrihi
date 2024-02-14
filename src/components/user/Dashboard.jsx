@@ -1,9 +1,10 @@
 import Layout from '../Layout';
 import { Link } from 'react-router-dom';
 import { userInfo } from '../../utils/auth';
+import PurchaseHistory from './PurchaseHistory';
 
 const Dashboard = () => {
-    const { name, email, role } = userInfo();
+    const { name, email, role, token } = userInfo();
     const UserLinks = () => {
         return (
             <div className="card">
@@ -19,15 +20,6 @@ const Dashboard = () => {
             </div>
         )
     };
-
-    const PurchaseHistory = () => (
-        <div className="card mb-5">
-            <h3 className="card-header">Purchase History</h3>
-            <ul className="list-group">
-                <li className="list-group-item">History</li>
-            </ul>
-        </div>
-    );
 
     const UserInfo = () => (
         <div className="card mb-5">
@@ -48,7 +40,7 @@ const Dashboard = () => {
                 </div>
                 <div className="col-sm-9">
                     <UserInfo />
-                    <PurchaseHistory />
+                    <PurchaseHistory token={token} />
                 </div>
             </div>
         </Layout>

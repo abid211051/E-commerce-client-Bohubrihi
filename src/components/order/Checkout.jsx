@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { getCartItems, getProfile } from '../../api/apiOrder';
+import { applyCoupon, getCartItems, getProfile, offlinepayment, onlinepayment } from '../../api/apiOrder';
 import { userInfo } from '../../utils/auth';
 import Layout from '../Layout';
-import { Link } from 'react-router-dom';
-
+import { ShowError, ShowSuccess } from '../../utils/messages';
 const Checkout = () => {
+    // zddlsj2wamv
+    const [err, setErr] = useState(false);
+    const [success, setSuccess] = useState(false);
+    const [coupon, setCoupon] = useState({
+        code: '',
+        discount: 0
+    })
     const [orderItems, setOrderItems] = useState([]);
     const [values, setValues] = useState({
         phone: '',
@@ -12,7 +18,7 @@ const Checkout = () => {
         address2: '',
         city: '',
         postcode: '',
-        country: ''
+        state: ''
     });
 
     const {
@@ -21,7 +27,7 @@ const Checkout = () => {
         address2,
         city,
         postcode,
-        country
+        state
     } = values;
 
     const loadCart = () => {
@@ -37,13 +43,41 @@ const Checkout = () => {
         loadCart();
     }, []);
 
-
+    const makePayment = (type) => {
+        if (type === "online") {
+            onlinepayment(userInfo().token, { coupon: coupon.code })
+                .then(response => {
+                    window.location.replace(`${response.data.url}`)
+                })
+                .catch(err => console.log(err.message))
+        }
+        else if (type === "offline") {
+            offlinepayment(userInfo().token, { coupon: coupon.code })
+                .then(response => {
+                    window.location.replace(`${response.data.url}`)
+                })
+                .catch(err => console.log(err.message))
+        }
+    }
+    const handleCoupon = (e) => {
+        e.preventDefault();
+        const coupon = e.target.coupon.value;
+        if (coupon !== '') {
+            applyCoupon(userInfo().token, { coupon: coupon })
+                .then(response => {
+                    setCoupon({
+                        code: response.data.code,
+                        discount: response.data.discount
+                    });
+                })
+                .catch(err => setErr(err.message))
+        }
+    }
     const getOrderTotal = () => {
         const arr = orderItems.map(cartItem => cartItem.price * cartItem.count);
         const sum = arr.reduce((a, b) => a + b, 0);
         return sum;
     }
-
     const shippinDetails = () => (
         <>
             To,
@@ -51,12 +85,14 @@ const Checkout = () => {
             <br /> Phone: {phone}
             <br /> {address1}
             {address2 ? (<><br />{address2}</>) : ""}
-            <br /> {city}-{postcode}, {country}
+            <br /> {city}-{postcode}, {state}
         </>
     )
 
-    if (address1 && city && phone && postcode && country) return (<>
+    if (address1 && city && phone && postcode && state) return (<>
         <Layout title="Checkout" description="Complete your order!" className="container">
+            <ShowError error={err} />
+            <ShowSuccess />
             <nav aria-label="breadcrumb">
                 <ol className="breadcrumb">
                     <li className="breadcrumb-item"><a href="#">Order</a></li>
@@ -84,12 +120,20 @@ const Checkout = () => {
                             </div>
                             <div className="card-footer">
                                 <span className="float-left"><b>Order Total</b></span>
-                                <span className="float-right"><b>৳ {getOrderTotal()}</b></span>
+                                <span className="float-right"><b>৳ {getOrderTotal() - (coupon.discount !== 0 ? (getOrderTotal() * (coupon.discount / 100)) : 1)}</b></span>
+                            </div>
+                            <div className='p-1'>
+                                <form action="" onSubmit={handleCoupon}>
+                                    <input type="text" className=' me-1' name='coupon' />
+                                    <button type='submit'>Coupon</button>
+                                </form>
                             </div>
                         </div>
                         <br />
-                        <p><a className="btn btn-warning btn-md" href="/payment">Make Payment</a></p>
+                        <button className='btn btn-warning me-2 mb-2' onClick={() => makePayment('offline')}>Cash on Delivery</button>
+                        <button className='btn btn-success' onClick={() => makePayment('online')}>Online Payment</button>
                     </div>
+                    <p className='text-danger txtalign'>*There will be 10 taka extra charge for cash on delivery</p>
                 </div>
             </div>
         </Layout>

@@ -18,6 +18,24 @@
     justify-content: space-between;
 }
 
+.dis {
+    display: inline;
+}
+
+.txtalign {
+    text-align: right;
+    font-weight: 600;
+}
+
+.btnwidth {
+    width: 80px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+}
+
 @media only screen and (min-width:768px) {
     .inp {
         width: 300px;

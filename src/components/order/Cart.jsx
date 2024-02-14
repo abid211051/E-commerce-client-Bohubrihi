@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import Layout from '../Layout';
 import CartItem from './CartItem';
 import { Link } from 'react-router-dom';
-import { getCartItems, updateCartItems, deleteCartItem } from '../../api/apiOrder';
+import { getCartItems, updateCartItems, deleteCartItem, applyCoupon } from '../../api/apiOrder';
 import { userInfo } from '../../utils/auth';
+import { ShowError, ShowSuccess } from '../../utils/messages';
 
 const Cart = () => {
     const [cartItems, setCartItems] = useState([]);
@@ -83,8 +84,9 @@ const Cart = () => {
                         <tr>
                             <th scope="row" />
                             <td colSpan={3}>Total</td>
-                            <td align="right">৳ {getCartTotal
-                                ()} </td>
+                            <td align="right">
+                                ৳ {getCartTotal()}
+                            </td>
                             <td />
                         </tr>
                         <tr>

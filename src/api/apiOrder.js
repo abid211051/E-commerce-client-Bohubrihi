@@ -43,10 +43,42 @@ export const getProfile = token => {
     })
 }
 
+
 export const updateProfile = (token, data) => {
     return axios.post(`${API}/profile`, data, {
         headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        }
+    })
+}
+
+export const offlinepayment = (token, coupon) => {
+    return axios.post(`${API}/payment/offline`, coupon, {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    })
+}
+
+export const onlinepayment = (token, coupon) => {
+    return axios.post(`${API}/payment/online`, coupon, {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    })
+}
+export const applyCoupon = (token, coupon) => {
+    return axios.post(`${API}/coupon/apply`, coupon, {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    })
+}
+
+export const paymentHistory = token => {
+    return axios.get(`${API}/payment`, {
+        headers: {
             "Authorization": `Bearer ${token}`
         }
     })

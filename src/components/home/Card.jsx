@@ -27,20 +27,22 @@ const Card = ({ product, handleAddToCart }) => {
                 />
                 <div className="card-body">
                     <div style={{ minHeight: "3em" }}>
-                        <p style={titleStyle}>{product.name}</p>
+                        <p style={titleStyle} className='fs-5 fw-medium'>{product.name}</p>
                     </div>
-                    <span style={{ fontSize: 20 }}>&#2547;</span>{product.price}
-                    <div className='flex'>
-                        <p>{product.quantity ? (<span className="text-light px-2 bg-primary rounded-5">{product.sold}</span>) : (<span className="">Out of Stock</span>)}</p>
-                        <p>{product.quantity <= product.sold ? (<span className="text-light px-2 bg-danger rounded-5">Stock Out</span>) : (<span className="text-light px-2 bg-success rounded-5">In Stock</span>)}</p>
+                    <span style={{ fontSize: 20 }}>{product.price}&#2547; </span>
+                    <div className='flex mt-2'>
+                        <p><span className="text-light px-2 bg-primary py-1">Sold: {product.sold}</span></p>
+                        <p>{product.quantity <= product.sold ? (<span className="text-light px-2 py-1 bg-danger rounded-5">Stock Out</span>) : (<span className="text-light px-2 py-1 bg-success rounded-5">In Stock</span>)}</p>
 
                     </div>
-                    <a href={`/product/${product._id}`}>
-                        <button className="btn btn-outline-warning btn-sm">View Product</button>
-                    </a>
-                    {product.quantity ? <>
-                        &nbsp;<button className="btn btn-outline-primary btn-sm" onClick={handleAddToCart} >Add to Cart</button>
-                    </> : ""}
+                    <div className='flex justify-content-between'>
+                        <a href={`/product/${product._id}`}>
+                            <button className="btn btn-outline-warning btn-sm">View Product</button>
+                        </a>
+                        {product.quantity ? <>
+                            &nbsp;<button className="btn btn-outline-primary btn-sm" onClick={handleAddToCart} >Add to Cart</button>
+                        </> : ""}
+                    </div>
                 </div>
             </div>
         </div>

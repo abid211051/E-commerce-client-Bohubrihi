@@ -12,7 +12,7 @@ const ShippingAddress = ({ history }) => {
         address2: '',
         city: '',
         postcode: '',
-        country: '',
+        state: '',
     });
     const [disabled, setDisabled] = useState(false);
     const [redirect, setRedirect] = useState(false);
@@ -23,14 +23,14 @@ const ShippingAddress = ({ history }) => {
         address2,
         city,
         postcode,
-        country,
+        state,
     } = values;
 
     useEffect(() => {
         getProfile(userInfo().token)
             .then(response => setValues(response.data))
             .catch(err => {
-                console.log(err)
+                // console.log(err)
             })
     }, []);
 
@@ -88,8 +88,8 @@ const ShippingAddress = ({ history }) => {
                                             <input name="postcode" value={postcode} type="number" required className="form-control" onChange={handleChange} />
                                         </div>
                                         <div className="col-4">
-                                            <label className="text-muted">Country:</label>
-                                            <input name="country" value={country} required className="form-control" onChange={handleChange} />
+                                            <label className="text-muted">state:</label>
+                                            <input name="state" value={state} required className="form-control" onChange={handleChange} />
                                             <br />
                                             <button type="submit" className="btn btn-primary btn-sm float-right" disabled={disabled}>Save and Checkout</button>
                                         </div>
