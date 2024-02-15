@@ -47,8 +47,8 @@ const Checkout = () => {
         if (type === "online") {
             onlinepayment(userInfo().token, { coupon: coupon.code })
                 .then(response => {
-                    // window.location.replace(`${response.data.url}`)
-                    console.log(response.data)
+                    window.location.replace(`${response.data.url}`)
+                    // console.log(response.data)
                 })
                 .catch(err => console.log(err.message))
         }
