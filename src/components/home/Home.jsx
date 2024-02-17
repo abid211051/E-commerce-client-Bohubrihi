@@ -154,7 +154,6 @@ const Home = () => {
             <div className='col-lg-10'>
                 <div style={{ width: "100%" }}>
                     <ShowError error={error} />
-                    <ShowError error={error} />
                     <ShowSuccess success={success} msg={"Added to cart successfully!"} />
                 </div>
                 <div className="row mb-5">
