@@ -81,8 +81,6 @@ const Login = () => {
             {redirectUser()}
             <ShowLoading loading={loading} />
             <ShowError error={error} />
-            <ShowLoading loading={loading} />
-            <ShowError error={error} />
             <h3>Login Here,</h3>
             <hr />
             {signInForm()}
