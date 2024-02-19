@@ -16,7 +16,7 @@ const Home = () => {
     const [products, setProducts] = useState([]);
     const [search, setSearch] = useState('');
     const [categories, setCategories] = useState([]);
-    const [limit, setLimit] = useState(5);
+    const [limit, setLimit] = useState(6);
     const [skip, setSkip] = useState(0);
     const [order, setOrder] = useState('desc');
     const [sortBy, setSortBy] = useState('sold');
@@ -157,8 +157,10 @@ const Home = () => {
                     <ShowSuccess success={success} msg={"Added to cart successfully!"} />
                 </div>
                 <div className="row mb-5">
-                    {products && products.map(product => <Card product={product} key={product._id}
-                        handleAddToCart={handleAddToCart(product)} />)}
+                    {products?.length > 0 ? products.map(product => {
+                        return (<Card product={product} key={product._id}
+                            handleAddToCart={handleAddToCart(product)} />)
+                    }) : <ShowError error={"No Product is Found"} />}
                 </div>
                 <div>
                     <LoadMoreLess handlemoreAndLess={handlemoreAndLess} />

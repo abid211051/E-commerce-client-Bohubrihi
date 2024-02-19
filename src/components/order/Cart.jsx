@@ -91,9 +91,12 @@ const Cart = () => {
                         </tr>
                         <tr>
                             <th scope="row" />
-                            <td colSpan={5} className="text-right">
-                                <a href="/"><button className="btn btn-warning mr-4">Continue Shoping</button></a>
-                                <a href="/shipping" className="btn btn-success mr-4">Proceed To Checkout</a>
+                            <td colSpan={5} className="text-end">
+                                <a href="/"><button className="btn btn-warning mr-4 m-1">Continue Shoping</button></a>
+                                {cartItems?.length > 0 ?
+                                    (<a href="/shipping" className="btn btn-success mr-4">Proceed To Checkout</a>) :
+                                    null
+                                }
                             </td>
                         </tr>
                     </tbody>

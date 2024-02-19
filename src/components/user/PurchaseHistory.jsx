@@ -24,9 +24,9 @@ const PurchaseHistory = ({ token }) => {
                                 ))}
                             </div>
                             <p className="card-text p-0 m-0">{item.customer.deliveryAddress.address1}, {item.customer.deliveryAddress.postcode}</p>
-                            <p className='fw-bold m-0 p-0'>Total Cost: <span className='fw-normal fs-5'>{item.price}</span><span className='fs-3'>৳</span></p>
+                            <p className='fw-bold m-0 p-0'>Total Cost: <span className='fw-normal fs-5'>{parseFloat(item.price).toFixed(2)}</span><span className='fs-3'>৳</span></p>
                             <div className="">
-                                <span className='fw-bold'>Payment Status:</span> <span className={item.paymentStatus !== 'success' ? 'text-warning p-1 fw-bold' : 'text-success fw-bold p-1'}>{item.customer.paymentType} [{item.paymentStatus}]</span >
+                                <span className='fw-bold'>Payment Status:</span> <span className={item.paymentStatus !== 'Success' ? 'text-warning p-1 fw-bold' : 'text-success fw-bold p-1'}>{item.customer.paymentType} [{item.paymentStatus}]</span >
                             </div>
                         </div>
                         <div className="card-footer text-body-secondary m-0 p-1">

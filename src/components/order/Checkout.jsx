@@ -66,9 +66,10 @@ const Checkout = () => {
         if (coupon !== '') {
             applyCoupon(userInfo().token, { coupon: coupon })
                 .then(response => {
+                    // console.log(response.data)
                     setCoupon({
                         code: response.data.code,
-                        discount: response.data.discount
+                        discount: parseInt(response.data.discount)
                     });
                 })
                 .catch(err => setErr(err.message))
@@ -121,7 +122,7 @@ const Checkout = () => {
                             </div>
                             <div className="card-footer">
                                 <span className="float-left"><b>Order Total</b></span>
-                                <span className="float-right"><b>৳ {getOrderTotal() - (coupon.discount !== 0 ? (getOrderTotal() * (coupon.discount / 100)) : 1)}</b></span>
+                                <span className="float-right"><b>৳ {parseFloat(getOrderTotal() - (coupon.discount !== 0 ? (getOrderTotal() * (coupon.discount / 100)) : 0)).toFixed(2)}</b></span>
                             </div>
                             <div className='p-1'>
                                 <form action="" onSubmit={handleCoupon}>
