@@ -36,6 +36,25 @@
     padding: 5px;
 }
 
+.socialbtn {
+    width: 400px;
+    height: 50px;
+    display: flex;
+    text-decoration: none;
+    /* justify-content: center; */
+    align-items: center;
+    border: 1px solid gray;
+    padding: 2px;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+.socialbtn p {
+    margin-top: 15px;
+    font-size: 1.5em;
+    font-weight: 700;
+}
+
 @media only screen and (min-width:768px) {
     .inp {
         width: 300px;

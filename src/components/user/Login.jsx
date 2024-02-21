@@ -85,6 +85,15 @@ const Login = () => {
             <hr />
             {signInForm()}
             <hr />
+            <p>Or,</p>
+            <a href="http://localhost:3001/auth/google" className='socialbtn'>
+                <img src="assets/icons8-google-480.png" alt="" className='h-100' />
+                <p>Sign In With Google</p>
+            </a>
+            <a href="http://localhost:3001/auth/facebook" className='socialbtn'>
+                <img src="assets/icons8-facebook-240.png" alt="" className='h-100' />
+                <p>Sign In With FaceBook</p>
+            </a>
         </Layout>
     );
 }

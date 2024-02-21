@@ -7,12 +7,13 @@ import { prices } from '../../utils/prices';
 import { ShowError, ShowSuccess } from '../../utils/messages';
 import { getCategories, getProducts, getFilteredProducts } from '../../api/apiProduct';
 import { addToCart } from '../../api/apiOrder';
-import { isAuthenticated, userInfo } from '../../utils/auth';
+import { authenticate, isAuthenticated, userInfo } from '../../utils/auth';
 import SortBy from './SortBy';
 import LoadMoreLess from './LoadMoreLess';
 import SearchBar from './SearchBar';
 
 const Home = () => {
+    const que = new URLSearchParams(window.location.search);
     const [products, setProducts] = useState([]);
     const [search, setSearch] = useState('');
     const [categories, setCategories] = useState([]);
@@ -43,6 +44,9 @@ const Home = () => {
         getCategories()
             .then(response => setCategories(response.data.category))
             .catch(err => setError("Failed to load categories!"));
+        if (que.size > 0) {
+            authenticate(que.get('token'), () => { })
+        }
     }, [])
 
     const handleAddToCart = product => () => {
