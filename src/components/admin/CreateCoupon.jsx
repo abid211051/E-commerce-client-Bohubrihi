@@ -1,108 +1,128 @@
-import React, { useState } from 'react'
-import Layout from '../Layout'
-import { ShowError, ShowLoading, ShowSuccess } from '../../utils/messages'
-import { createCoupon } from '../../api/apiAdmin';
-import { userInfo } from '../../utils/auth';
+import React, { useState } from "react";
+import Layout from "../Layout";
+import { ShowError, ShowLoading, ShowSuccess } from "../../utils/messages";
+import { createCoupon } from "../../api/apiAdmin";
+import { userInfo } from "../../utils/auth";
+import { toast } from "sonner";
 
 const CreateCoupon = () => {
-    const [values, setValues] = useState({
-        loading: false,
-        error: false,
-        success: false,
-        msg: null
-    })
-    const [code, setCode] = useState((Math.random().toString(36).substring(3, 6) + (new Date().getTime()).toString(36)).split('sif').join(''));
-    const generatecode = () => {
-        const cc = (Math.random().toString(36).substring(3, 6) + (new Date().getTime()).toString(36)).split('sif').join('');
-        setCode(cc);
-    }
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        setValues({
-            ...values,
-            loading: true,
-            error: false,
-            success: false,
-        })
-        const data = {
-            events: e.target.event.value,
-            discount: parseInt(e.target.discount.value),
-            expirein: e.target.expirein.value,
-            code
-        }
-        const { token } = userInfo();
-        createCoupon(token, data)
-            .then(respose => {
-                setValues({
-                    loading: false,
-                    error: false,
-                    success: true,
-                    msg: respose.data
-                })
-            })
-            .catch(err => {
-                setValues({
-                    ...values,
-                    loading: false,
-                    error: 'Something went wrong',
-                    success: false,
-                })
-            })
-    }
-    return (
-        <Layout title="Add a new category">
-            <div className="row">
-                <div className="col-md-8 offset-md-2">
-                    <h3>Create Coupon</h3>
-                    <ShowLoading loading={values.loading} />
-                    <ShowError error={values.error} />
-                    <ShowSuccess success={values.success} msg={values.msg} />
-                    <button onClick={generatecode} className='btn btn-outline-dark'>Regenerate Code</button>
-                    <form className="mb-3" onSubmit={handleSubmit}>
-                        <div className="form-group">
-                            <label className="text-muted">Code:</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                required
-                                value={code}
-                                disabled
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label className="text-muted">Event:</label>
-                            <input
-                                type="text"
-                                name="event"
-                                className="form-control"
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label className="text-muted">Discount:</label>
-                            <input
-                                type="number"
-                                name="discount"
-                                className="form-control"
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label className="text-muted">Expiration Date:</label>
-                            <input
-                                name="expirein"
-                                className="form-control"
-                                type="date"
-                                required
-
-                            />
-                        </div>
-                        <button className="btn btn-outline-primary" type="submit">Create Coupon</button>
-                    </form>
-                </div >
-            </div >
-        </Layout >
+  const [values, setValues] = useState({
+    msg: null,
+  });
+  const [code, setCode] = useState(
+    (
+      Math.random().toString(36).substring(3, 6) +
+      new Date().getTime().toString(36)
     )
-}
+      .split("sif")
+      .join("")
+  );
+  const generatecode = () => {
+    const cc = (
+      Math.random().toString(36).substring(3, 6) +
+      new Date().getTime().toString(36)
+    )
+      .split("sif")
+      .join("");
+    setCode(cc);
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setValues({
+      ...values,
+    });
+    const data = {
+      events: e.target.event.value,
+      discount: parseInt(e.target.discount.value),
+      expirein: e.target.expirein.value,
+      code,
+    };
+    const { token } = userInfo();
+    createCoupon(token, data)
+      .then((respose) => {
+        toast.success("Coupon Created", {
+          richColors: true,
+          closeButton: true,
+          position: "top-right",
+        });
+        setValues({
+          msg: respose.data,
+        });
+      })
+      .catch((err) => {
+        toast.error(err.message, {
+          richColors: true,
+          closeButton: true,
+          position: "top-right",
+        });
+        setValues({
+          ...values,
 
-export default CreateCoupon
+          error: "Something went wrong",
+        });
+      });
+  };
+  return (
+    <Layout title="Add a new category">
+      <div className="p-2">
+        <div className="flex items-center justify-center">
+          <div className="sm:w-[550px] w-full">
+            <button
+              onClick={generatecode}
+              className="bg-amber-600 text-white p-2 rounded-md w-full mx-auto"
+            >
+              Regenerate Code
+            </button>
+            <form onSubmit={handleSubmit} className="w-full mx-auto">
+              <div className="mb-3">
+                <label className="font-semibold">Code:</label>
+                <input
+                  type="text"
+                  className="border-2 p-1.5 rounded-md w-full"
+                  required
+                  value={code}
+                  disabled
+                />
+              </div>
+              <div className="mb-3">
+                <label className="font-semibold">Event:</label>
+                <input
+                  type="text"
+                  name="event"
+                  className="border-2 p-1.5 rounded-md w-full"
+                  required
+                />
+              </div>
+              <div className="mb-3">
+                <label className="font-semibold">Discount:</label>
+                <input
+                  type="number"
+                  name="discount"
+                  className="border-2 p-1.5 rounded-md w-full"
+                  required
+                />
+              </div>
+              <div className="mb-3">
+                <label className="font-semibold">Expiration Date:</label>
+                <input
+                  name="expirein"
+                  className="border-2 p-1.5 rounded-md w-full"
+                  type="date"
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                className="p-2 bg-black text-white active:scale-95 w-full rounded-md"
+              >
+                Create Coupon
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </Layout>
+  );
+};
+
+export default CreateCoupon;

@@ -1,177 +1,123 @@
-import { useState, useEffect } from 'react';
-import Layout from '../Layout';
-import Card from './Card';
-import CheckBox from './CheckBox';
-import RadioBox from './RadioBox';
-import { prices } from '../../utils/prices';
-import { ShowError, ShowSuccess } from '../../utils/messages';
-import { getCategories, getProducts, getFilteredProducts } from '../../api/apiProduct';
-import { addToCart } from '../../api/apiOrder';
-import { authenticate, isAuthenticated, userInfo } from '../../utils/auth';
-import SortBy from './SortBy';
-import LoadMoreLess from './LoadMoreLess';
-import SearchBar from './SearchBar';
+import { useState, useEffect } from "react";
+import Layout from "../Layout";
+
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "../ui/carousel";
+import { getTrendingHot } from "../../api/apiProduct";
+
+import Hero from "./hero";
+import Card from "./Card";
+import { toast } from "sonner";
+import Footer from "./footer";
+import { isAuthenticated, userInfo } from "../../utils/auth";
+import { addToCart } from "../../api/apiOrder";
+import Autoplay from "embla-carousel-autoplay";
 
 const Home = () => {
-    const que = new URLSearchParams(window.location.search);
-    const [products, setProducts] = useState([]);
-    const [search, setSearch] = useState('');
-    const [categories, setCategories] = useState([]);
-    const [limit, setLimit] = useState(6);
-    const [skip, setSkip] = useState(0);
-    const [order, setOrder] = useState('desc');
-    const [sortBy, setSortBy] = useState('sold');
-    const [error, setError] = useState(false);
-    const [success, setSuccess] = useState(false);
-    const [filters, setFilters] = useState({
-        category: [],
-        price: []
-    })
+  const [products, setProducts] = useState([]);
 
-    useEffect(() => {
-        getProducts(sortBy, order, limit, skip, search)
-            .then(response => {
-                setProducts(response.data.product);
-                if (response.data.count <= skip || skip < 0) {
-                    setSkip(0);
-                }
-            })
-            .catch(err => setError("Failed to load products!"));
-
-    }, [order, sortBy, skip])
-
-    useEffect(() => {
-        getCategories()
-            .then(response => setCategories(response.data.category))
-            .catch(err => setError("Failed to load categories!"));
-        if (que.size > 0) {
-            authenticate(que.get('token'), () => { })
-        }
-    }, [])
-
-    const handleAddToCart = product => () => {
-        if (isAuthenticated()) {
-            setError(false);
-            setSuccess(false);
-            const user = userInfo();
-            const cartItem = {
-                user: user._id,
-                product: product._id,
-                price: product.price,
-            }
-            addToCart(user.token, cartItem)
-                .then(reponse => setSuccess(true))
-                .catch(err => {
-                    if (err.response) setError(err.response.data);
-                    else setError("Adding to cart failed!");
-                })
-        } else {
-            setSuccess(false);
-            setError("Please Login First!");
-        }
+  useEffect(() => {
+    getTrendingHot()
+      .then((response) => {
+        setProducts(response.data.product);
+      })
+      .catch((err) => {
+        toast.error(err.message, {
+          closeButton: true,
+          richColors: true,
+          position: "top-right",
+        });
+      });
+  }, []);
+  const handleAddToCart = (product) => () => {
+    if (isAuthenticated()) {
+      const user = userInfo();
+      const cartItem = {
+        user: user._id,
+        product: product._id,
+        price: product.price,
+      };
+      addToCart(user.token, cartItem)
+        .then((reponse) => {
+          toast.success("Item Added to the Cart", {
+            closeButton: true,
+            richColors: true,
+            position: "top-right",
+          });
+        })
+        .catch((err) => {
+          toast.error(err.message, {
+            closeButton: true,
+            richColors: true,
+            position: "top-right",
+          });
+        });
+    } else {
+      toast.error("Please Login First", {
+        closeButton: true,
+        richColors: true,
+        position: "top-right",
+      });
     }
-
-    const handleFilters = (myfilters, filterBy) => {
-        const newFilters = { ...filters };
-        if (filterBy === 'category') {
-            newFilters[filterBy] = myfilters;
-        }
-
-        if (filterBy === 'price') {
-            const data = prices;
-            let arr = [];
-            for (let i in data) {
-                if (data[i].id === parseInt(myfilters)) {
-                    arr = data[i].arr;
-                }
-            }
-            newFilters[filterBy] = arr;
-        }
-        setFilters(newFilters);
-
-        getFilteredProducts(skip, limit, newFilters, order, sortBy, search)
-            .then(response => setProducts(response.data.product))
-            .catch(err => setError("Failed to load products!"));
-    }
-
-    const handleSortAndOrder = (val) => {
-        if (Object.keys(val)[0] === 'asc_desc') {
-            setOrder(Object.values(val)[0]);
-        }
-        if (Object.keys(val)[0] === 'prod_cond') {
-            setSortBy(Object.values(val)[0])
-        }
-    }
-
-    const handlemoreAndLess = (val) => {
-        if (val === 'prev') {
-            setSkip(prev => prev - 5);
-        }
-        else if (val === 'next') {
-            setSkip(prev => prev + 5);
-        }
-    }
-
-    const handleSearch = (prod, searchval) => {
-        if (prod === null) {
-            setSearch(searchval);
-        }
-        else {
-            setProducts(prod);
-            setSearch(searchval);
-        }
-    }
-    const showFilters = () => {
-        return (
-            <>
-                <div className="col">
-                    <div className="mb-4">
-                        <h5>Filter By Categories:</h5>
-                        <div className='align'>
-                            <CheckBox
-                                categories={categories}
-                                handleFilters={myfilters => handleFilters(myfilters, 'category')}
-                            />
-                        </div>
-                    </div>
-                    <div className="mb-4">
-                        <h5>Filter By Price:</h5>
-                        <div className="col">
-                            <RadioBox
-                                prices={prices}
-                                handleFilters={myfilters => handleFilters(myfilters, 'price')}
-                            />
-                        </div>
-                    </div>
-                    <div className="mb-4">
-                        <SortBy handleSortAndOrder={handleSortAndOrder} />
-                    </div>
-                </div>
-            </>
-        )
-    }
-
-    return (
-        <Layout title="Home Page" className="container-fluid row itemCenter mb-5">
-            <SearchBar handleSearch={handleSearch} sortBy={sortBy} order={order} limit={limit} skip={skip} />
-            {showFilters()}
-            <div className='col-lg-10'>
-                <div style={{ width: "100%" }}>
-                    <ShowError error={error} />
-                    <ShowSuccess success={success} msg={"Added to cart successfully!"} />
-                </div>
-                <div className="row mb-5">
-                    {products?.length > 0 ? products.map(product => {
-                        return (<Card product={product} key={product._id}
-                            handleAddToCart={handleAddToCart(product)} />)
-                    }) : <ShowError error={"No Product is Found"} />}
-                </div>
-                <div>
-                    <LoadMoreLess handlemoreAndLess={handlemoreAndLess} />
-                </div>
-            </div>
-        </Layout>
-    )
-}
+  };
+  return (
+    <Layout title="Home Page" className="">
+      <Hero products={products} />
+      <div className="">
+        <div className="sm:p-10 p-2 w-full min-h-[300px] bg-gradient-to-bl from-red-900 via-zinc-900 to-zinc-900 gap-5">
+          <div className="flex justify-between gap-3 items-start">
+            <p className="text-white sm:text-4xl text-2xl mb-6 uppercase font-semibold">
+              Trending Products
+            </p>
+            <a
+              href="/allproduct"
+              className="text-orange-50 underline underline-offset-4 sm:text-base text-sm"
+            >
+              All PRODUCTS
+            </a>
+          </div>
+          {products.length ? (
+            <Carousel
+              opts={{
+                align: "center",
+              }}
+              plugins={[
+                Autoplay({
+                  delay: 5000,
+                  stopOnInteraction: false,
+                }),
+              ]}
+              className="w-full py-3 flex justify-between items-center"
+            >
+              <CarouselContent>
+                {products.length &&
+                  products.map((product) =>
+                    product.trending ? (
+                      <CarouselItem
+                        key={product._id}
+                        className="sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
+                      >
+                        <Card
+                          product={product}
+                          bg={null}
+                          handleAddToCart={handleAddToCart(product)}
+                        />
+                      </CarouselItem>
+                    ) : null
+                  )}
+              </CarouselContent>
+            </Carousel>
+          ) : null}
+        </div>
+      </div>
+      <Footer />
+    </Layout>
+  );
+};
 
 export default Home;

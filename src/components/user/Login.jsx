@@ -1,123 +1,27 @@
-import { useState } from "react";
-import { Redirect } from "react-router-dom";
-import { API } from "../../utils/config";
 import Layout from "../Layout";
-import { ShowError, ShowLoading } from "../../utils/messages";
-import { login } from "../../api/apiAuth";
-import { authenticate, isAuthenticated, userInfo } from "../../utils/auth";
 
-const Login = () => {
-  const [values, setValues] = useState({
-    email: "",
-    password: "",
-    error: false,
-    loading: false,
-    disabled: false,
-    redirect: false,
-  });
+import { GalleryVerticalEnd } from "lucide-react";
 
-  const { email, password, loading, error, redirect, disabled } = values;
+import LoginForm from "../login-form";
 
-  const handleChange = (e) => {
-    setValues({
-      ...values,
-      error: false,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setValues({ ...values, error: false, loading: true, disabled: true });
-
-    login({ email, password })
-      .then((response) => {
-        authenticate(response.data.token, () => {
-          setValues({
-            email: "",
-            password: "",
-            success: true,
-            disabled: false,
-            loading: false,
-            redirect: true,
-          });
-        });
-      })
-      .catch((err) => {
-        let errMsg = "Something went wrong!";
-        if (err.response) {
-          errMsg = err.response.data;
-        } else {
-          errMsg = "Something went wrong!";
-        }
-        setValues({
-          ...values,
-          error: errMsg,
-          disabled: false,
-          loading: false,
-        });
-      });
-  };
-
-  const signInForm = () => (
-    <form onSubmit={handleSubmit}>
-      <div className="form-group">
-        <label className="text-muted">Email:</label>
-        <input
-          name="email"
-          type="email"
-          className="form-control"
-          value={email}
-          required
-          onChange={handleChange}
-        />
-      </div>
-      <div className="form-group">
-        <label className="text-muted">Password:</label>
-        <input
-          name="password"
-          type="password"
-          onChange={handleChange}
-          className="form-control"
-          value={password}
-          required
-        />
-      </div>
-      <button
-        type="submit"
-        className="btn btn-outline-primary"
-        disabled={disabled}
-      >
-        Login
-      </button>
-    </form>
-  );
-
-  const redirectUser = () => {
-    if (redirect)
-      return window.location.replace(`${userInfo().role}/dashboard`);
-    if (isAuthenticated()) return window.location.replace("/");
-  };
+export default function Login() {
   return (
-    <Layout title="Login" className="container col-md-8 offset-md-2">
-      {redirectUser()}
-      <ShowLoading loading={loading} />
-      <ShowError error={error} />
-      <h3>Login Here,</h3>
-      <hr />
-      {signInForm()}
-      <hr />
-      <p>Or,</p>
-      <a href={`${API}/auth/google`} className="socialbtn">
-        <img src="assets/icons8-google-480.png" alt="" className="h-100" />
-        <p>Sign In With Google</p>
-      </a>
-      <a href={`${API}/auth/facebook`} className="socialbtn">
-        <img src="assets/icons8-facebook-240.png" alt="" className="h-100" />
-        <p>Sign In With FaceBook</p>
-      </a>
+    <Layout>
+      <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-gradient-to-r from-zinc-900 to-slate-700 p-2 md:p-10 text-white">
+        <div className="flex w-full max-w-sm flex-col gap-6">
+          <a
+            href="#"
+            className="flex items-center gap-2 self-center font-medium"
+          >
+            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
+              <GalleryVerticalEnd className="size-4" />
+            </div>
+            Dom Store
+          </a>
+
+          <LoginForm />
+        </div>
+      </div>
     </Layout>
   );
-};
-
-export default Login;
+}

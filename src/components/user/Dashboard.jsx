@@ -1,50 +1,64 @@
-import Layout from '../Layout';
-import { Link } from 'react-router-dom';
-import { userInfo } from '../../utils/auth';
-import PurchaseHistory from './PurchaseHistory';
+import Layout from "../Layout";
+import { userInfo } from "../../utils/auth";
+import PurchaseHistory from "./PurchaseHistory";
+import { ChartBarStacked, CircleUser, Upload } from "lucide-react";
 
 const Dashboard = () => {
-    const { name, email, role, token } = userInfo();
-    const UserLinks = () => {
-        return (
-            <div className="card">
-                <h4 className="card-header">User Links</h4>
-                <ul className="list-group">
-                    <li className="list-group-item">
-                        <a className="nav-link" href="/cart">My Cart</a>
-                    </li>
-                    <li className="list-group-item">
-                        <a className="nav-link" href="#">Update Profile</a>
-                    </li>
-                </ul>
-            </div>
-        )
-    };
-
-    const UserInfo = () => (
-        <div className="card mb-5">
-            <h3 className="card-header">User Information</h3>
-            <ul className="list-group">
-                <li className="list-group-item">{name}</li>
-                <li className="list-group-item">{email}</li>
-                <li className="list-group-item">{role}</li>
-            </ul>
-        </div>
-    );
-
+  const { name, email, role, token } = userInfo();
+  const UserLinks = () => {
     return (
-        <Layout title="Dashboard" className="container-fluid">
-            <div className="row">
-                <div className="col-sm-3">
-                    <UserLinks />
-                </div>
-                <div className="col-sm-9">
-                    <UserInfo />
-                    <PurchaseHistory token={token} />
-                </div>
-            </div>
-        </Layout>
-    )
-}
+      <div className="grid lg:grid-cols-5 lg:px-2 py-5 px-2 gap-4 bg-gradient-to-r from-zinc-900 to-slate-700 min-h-screen">
+        <div className="flex lg:flex-col flex-col-reverse justify-between bg-[#7258db] lg:col-start-1 lg:col-span-1 rounded-md p-2 gap-6">
+          <div>
+            <h4 className="font-semibold text-white mb-2">User Tools</h4>
+            <ul className="flex lg:flex-col gap-4 flex-wrap ">
+              <li className="">
+                <a
+                  className="flex gap-1 items-center text-white"
+                  href="/create/category"
+                >
+                  <Upload size={20} />
+                  <span>Update Profile</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <ul className="flex items-center gap-2 text-white">
+              <CircleUser size={30} className="" />
+              <div>
+                <li className="text-sm">{name}</li>
+                <li className="text-sm">{email}</li>
+              </div>
+            </ul>
+          </div>
+        </div>
+        <div className="lg:col-start-2 lg:col-span-4">
+          <h1 className="text-xl mb-5 font-semibold text-white">Orders List</h1>
+          <div className="">
+            <PurchaseHistory token={token} />
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const UserInfo = () => (
+    <div className="">
+      <h3 className="">User Information</h3>
+      <ul className="">
+        <li className="">{name}</li>
+        <li className="">{email}</li>
+        <li className="">{role}</li>
+      </ul>
+    </div>
+  );
+
+  return (
+    <Layout title="Dashboard" className="container-fluid">
+      <UserLinks />
+    </Layout>
+  );
+};
 
 export default Dashboard;

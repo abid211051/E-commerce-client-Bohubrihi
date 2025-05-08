@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
+import { CarouselItem } from "../ui/carousel";
 
 const CheckBox = ({ categories, handleFilters }) => {
   const [checked, setChecked] = useState([]);
   const checkedIds = [...checked];
   const handleToggle = (id) => () => {
-    // return -1 or first index
     const foundId = checked.indexOf(id);
     if (foundId === -1) {
       checkedIds.push(id);
@@ -15,20 +15,21 @@ const CheckBox = ({ categories, handleFilters }) => {
     handleFilters(checkedIds);
   };
 
-  // useEffect(() => {
-  //     alert(JSON.stringify(checked))
-  // }, [checked])
-
   return categories?.map((category) => (
-    <div className="" key={category._id}>
-      <input
-        onChange={handleToggle(category._id)}
-        value={checked.indexOf(category._id === -1)}
-        type="checkbox"
-        className="form-check-input me-2"
-      />
-      <label className="form-check-label">{category.name}</label>
-    </div>
+    <CarouselItem
+      className="mr-2 sm:basis-1/5  lg:basis-1/4 basis-1/2 sm:w-full w-0"
+      key={category?._id}
+    >
+      <div className="flex gap-2">
+        <input
+          onChange={handleToggle(category?._id)}
+          value={checked.indexOf(category?._id === -1)}
+          type="checkbox"
+          className="w-4"
+        />
+        <label className="">{category?.name}</label>
+      </div>
+    </CarouselItem>
   ));
 };
 
