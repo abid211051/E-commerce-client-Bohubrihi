@@ -10,7 +10,7 @@ import {
   getProducts,
 } from "../../api/apiProduct";
 import { addToCart } from "../../api/apiOrder";
-import { ArrowDownUp, ArrowDownWideNarrow } from "lucide-react";
+import { ArrowDownUp, ArrowDownWideNarrow, RotateCw } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,13 +21,7 @@ import {
 import Card from "./Card";
 import LoadMoreLess from "./LoadMoreLess";
 import SearchBar from "./SearchBar";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "../ui/carousel";
+import { Carousel, CarouselContent } from "../ui/carousel";
 import { authenticate, isAuthenticated, userInfo } from "../../utils/auth";
 import { toast } from "sonner";
 import Autoplay from "embla-carousel-autoplay";
@@ -35,6 +29,7 @@ import Autoplay from "embla-carousel-autoplay";
 export default function AllProduct() {
   const que = new URLSearchParams(window.location.search);
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [categories, setCategories] = useState([]);
   const [limit, setLimit] = useState(6);
@@ -47,20 +42,23 @@ export default function AllProduct() {
   });
 
   useEffect(() => {
+    setLoading(true);
     getProducts(sortBy, order, limit, skip, search)
       .then((response) => {
         setProducts(response.data.product);
         if (response.data.count <= skip || skip < 0) {
           setSkip(0);
         }
+        setLoading(false);
       })
-      .catch((err) =>
+      .catch((err) => {
         toast.error(err.message, {
           closeButton: true,
           richColors: true,
           position: "top-right",
-        })
-      );
+        });
+        setLoading(false);
+      });
   }, [order, sortBy, skip]);
 
   useEffect(() => {
@@ -171,10 +169,9 @@ export default function AllProduct() {
         skip={skip}
       />
       <div className="min-h-screen  grid lg:grid-cols-4 gap-5 md:p-5 p-2 bg-gradient-to-r from-zinc-900 to-slate-700">
-        <div className="lg:col-start-1 lg:col-span-1 text-white flex lg:flex-col flex-row gap-10 lg:border-2 p-2 justify-start">
-          <div className="w-full">
+        <div className="lg:col-start-1 lg:col-span-1 h-fit text-white flex lg:flex-col flex-row gap-10 lg:border-2 p-2 justify-start rounded-lg">
+          <div className="w-full h-fit">
             <h5 className="text-xl border-b-2 w-fit mb-2">Browse By</h5>
-
             <Carousel
               opts={{
                 align: "center",
@@ -199,8 +196,6 @@ export default function AllProduct() {
                 />
               </CarouselContent>
             </Carousel>
-          </div>
-          <div className="">
             <div className="lg:block hidden">
               <div className="flex items-center border-b-2 w-fit mb-4">
                 <ArrowDownWideNarrow />
@@ -211,49 +206,57 @@ export default function AllProduct() {
                 handleFilters={(myfilters) => handleFilters(myfilters, "price")}
               />
             </div>
+            <div className="lg:hidden flex justify-between my-4 border-2 p-1.5 rounded-lg">
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  className={
+                    "lg:hidden flex text-sm items-center gap-1 bg-muted p-2 rounded-md text-black"
+                  }
+                >
+                  <ArrowDownWideNarrow size={18} />
+                  <h5>Filter By Price</h5>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <RadioBox
+                    prices={prices}
+                    handleFilters={(myfilters) =>
+                      handleFilters(myfilters, "price")
+                    }
+                  />
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  className={
+                    "flex text-sm items-center gap-1 bg-muted p-2 rounded-md text-black"
+                  }
+                >
+                  <ArrowDownUp size={18} />
+                  <h5>Sort By</h5>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <SortBy handleSortAndOrder={handleSortAndOrder} />
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
         </div>
         <div className="lg:col-start-2 lg:col-span-3">
-          <div className="flex justify-between mb-4 border-2 p-1.5">
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                className={
-                  "lg:hidden flex text-sm items-center gap-1 bg-muted p-2 rounded-md text-black"
-                }
-              >
-                <ArrowDownWideNarrow size={18} />
-                <h5>Filter By Price</h5>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <RadioBox
-                  prices={prices}
-                  handleFilters={(myfilters) =>
-                    handleFilters(myfilters, "price")
-                  }
-                />
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                className={
-                  "flex text-sm items-center gap-1 bg-muted p-2 rounded-md text-black"
-                }
-              >
-                <ArrowDownUp size={18} />
-                <h5>Sort By</h5>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <SortBy handleSortAndOrder={handleSortAndOrder} />
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
           <div className="w-full flex flex-wrap gap-8 justify-center items-center">
-            {products?.length &&
+            {loading ? (
+              <p className="w-fit flex flex-col gap-3 text-lg font-semibold px-2 mx-auto text-white">
+                <span>
+                  Initial loading can take up to minute. Please wait ... :{")"}
+                </span>
+
+                <RotateCw className="mx-auto animate-spin" />
+              </p>
+            ) : products?.length ? (
               products.map((product) => (
                 <Card
                   product={product}
@@ -261,7 +264,12 @@ export default function AllProduct() {
                   bg={true}
                   handleAddToCart={handleAddToCart(product)}
                 />
-              ))}
+              ))
+            ) : (
+              <p className="md:text-2xl text-lg font-semibold px-2 mx-auto text-white">
+                No Products Currently available :{"("}
+              </p>
+            )}
           </div>
           <div>
             <LoadMoreLess handlemoreAndLess={handlemoreAndLess} />

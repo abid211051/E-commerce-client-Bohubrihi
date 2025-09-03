@@ -1,13 +1,7 @@
 import { useState, useEffect } from "react";
 import Layout from "../Layout";
 
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "../ui/carousel";
+import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 import { getTrendingHot } from "../../api/apiProduct";
 
 import Hero from "./hero";
@@ -17,14 +11,17 @@ import Footer from "./footer";
 import { isAuthenticated, userInfo } from "../../utils/auth";
 import { addToCart } from "../../api/apiOrder";
 import Autoplay from "embla-carousel-autoplay";
+import { RotateCw } from "lucide-react";
 
 const Home = () => {
   const [products, setProducts] = useState([]);
-
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
+    setLoading(true);
     getTrendingHot()
       .then((response) => {
         setProducts(response.data.product);
+        setLoading(false);
       })
       .catch((err) => {
         toast.error(err.message, {
@@ -32,6 +29,7 @@ const Home = () => {
           richColors: true,
           position: "top-right",
         });
+        setLoading(false);
       });
   }, []);
   const handleAddToCart = (product) => () => {
@@ -67,7 +65,7 @@ const Home = () => {
   };
   return (
     <Layout title="Home Page" className="">
-      <Hero products={products} />
+      <Hero products={products} loading={loading} />
       <div className="">
         <div className="sm:p-10 p-2 w-full min-h-[300px] bg-gradient-to-bl from-red-900 via-zinc-900 to-zinc-900 gap-5">
           <div className="flex justify-between gap-3 items-start">
@@ -81,7 +79,14 @@ const Home = () => {
               All PRODUCTS
             </a>
           </div>
-          {products.length ? (
+          {loading ? (
+            <p className="w-fit flex flex-col gap-3 text-lg font-semibold px-2 mx-auto text-white">
+              <span>
+                Initial loading can take up to minute. Please wait ... :{")"}
+              </span>
+              <RotateCw className="mx-auto animate-spin" />
+            </p>
+          ) : products.length ? (
             <Carousel
               opts={{
                 align: "center",
@@ -112,7 +117,11 @@ const Home = () => {
                   )}
               </CarouselContent>
             </Carousel>
-          ) : null}
+          ) : (
+            <p className="md:text-2xl text-lg font-semibold px-2 text-white mx-auto w-fit">
+              No Trending Products Currently available :{"("}
+            </p>
+          )}
         </div>
       </div>
       <Footer />
